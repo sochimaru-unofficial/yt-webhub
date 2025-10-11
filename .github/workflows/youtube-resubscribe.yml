@@ -1,0 +1,20 @@
+name: YouTube Resubscribe
+
+on:
+  schedule:
+    # 毎週 月・火・金 午前9時（JST）
+    - cron: '0 0 * * 1,2,5' # UTCで0:00 = JSTで9:00
+  workflow_dispatch: # 手動実行も可能
+
+jobs:
+  resubscribe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resubscribe to YouTube Pub/Sub
+        env:
+          WORKER_URL: ${{ secrets.WORKER_URL }}
+          WORKER_API_TOKEN: ${{ secrets.WORKER_API_TOKEN }}
+        run: |
+          echo "Re-subscribing to YouTube Pub/Sub..."
+          curl -X POST "$WORKER_URL/resubscribe" \
+            -H "Authorization: Bearer $WORKER_API_TOKEN"
